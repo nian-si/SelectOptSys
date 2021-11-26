@@ -1,0 +1,14 @@
+p = 0.1:0.05:0.9;
+n = length(p);
+K = 16;
+rec = zeros(K,n);
+for k = 1:16
+for i = 1:n
+    for j = 1:100     
+        rec(k,i) = rec(i) + queue_run_once(k,p(i),K,2000);
+    end
+end
+figure
+hold on
+plot(rec)
+hold off
