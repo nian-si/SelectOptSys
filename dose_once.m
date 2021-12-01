@@ -1,0 +1,10 @@
+function  [cur_val,cur_grad] = dose_once(index,x,systems_data)
+cur_sys = systems_data(index,:);
+a = cur_sys(1);
+b = cur_sys(2);
+c = cur_sys(3);
+cur_val = a * x^2 + b * x + c + normrnd(0,1);
+delta = 0.5;
+x_grad = x-delta;
+val_grad = a * x_grad^2 + b * x_grad + c + normrnd(0,1);
+cur_grad = (cur_val - val_grad) / delta;

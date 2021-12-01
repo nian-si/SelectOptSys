@@ -2,15 +2,15 @@ function  [cur_val,cur_grad,n_customer,D,W] = queue_run_once(index,p,K,Length_T)
 lambda0 = 1;
 sigma1 = 1;
 sigma2 = 1;
-mu1 = log(6) + log(K);
-mu2 = log(6) + log(K);
+mu1 = log(10) + log(K);
+mu2 = log(2) + log(K);
 rho = 0.5;
 n_server1 = index;
 n_server2 = K + 1 - index;
 beta_theta = 1; % 1 / beta 
 beta_alpha = 2 * (mu1);
 delta_p = 0.03;
-c = 0.05;
+c = 0.01;
 
 % Generate homogeneous poisson process
 inter_arrival_time = exprnd(1/lambda0, ceil(2 * Length_T * lambda0),1);

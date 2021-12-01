@@ -1,4 +1,4 @@
-function main(type, K_list)
+function main_uniform(type, K_list)
 if nargin == 0
     type = 2;
     K_list = [16,24,32,40];
@@ -54,12 +54,11 @@ for  K_i= 1:length(K_list)
     for  T_i= 1:length(T_list)
         T = T_list(T_i); % T = 10000 for Queuing; T = 500000 for newsvendar
         K = K_list(K_i);
-        L = log2(K);
+        L = 1;
         correct = 0;
         cur_optimal = K_optimal(K_i);
        
         parfor experiment = 1:experiments
-            %L = 1;
             cur_K = K;
             val_K = zeros(K,2);
             val_K(:,2) = 1:cur_K;
@@ -95,7 +94,7 @@ for  K_i= 1:length(K_list)
         format shortg
         [K,T,correct / experiments]
         cor_rec(T_i,K_i) = correct / experiments;
-        save(strcat('data_',type_name{type},'_K',num2str( K_list,'_%d'),'.mat'))
+        save(strcat('data_uniform_',type_name{type},'_K',num2str( K_list,'_%d'),'.mat'))
     end
 end
 toc
