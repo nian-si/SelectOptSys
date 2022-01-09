@@ -26,11 +26,13 @@ experiments = 1000;
 type_name = {'newsvendor','Queueing','dose'};
 
 
+load('dose_sys.mat');
+systems_parpool = parallel.pool.Constant(systems);
 K_optimal = zeros(length(K_list),1);
 
-
+Length_T = 2000;
 if(type == 2)
-    optimal_map = containers.Map([16,24,32,40,128],[9,12,16,20,65]);
+    optimal_map = containers.Map([16,24,32,40,48,128],[9,12,16,20,24,65]);
     for i = 1:length(K_list)
         K_optimal(i) = optimal_map(K_list(i));
     end
@@ -41,13 +43,14 @@ if(type == 2)
 end
 if (type == 3)
     load('dose_sys.mat');
-    K_optimal3 = zeros(1,length(K_list));
+    K_optimal = zeros(1,length(K_list));
     for i = 1:length(K_list)
-        [~,K_optimal3(i)] = min(opt_list(1:K_list(i),1));
+        [~,K_optimal(i)] = min(opt_list(1:K_list(i),1));
     end
     p = 11:1:40;
     Length_p = length(p);
     T_list = T_list * 2;
+   
 end
 
 cor_rec = zeros(length(T_list),length(K_list));
@@ -69,7 +72,7 @@ for K_i = 1:length(K_list)
                         if (type == 2)
                             rec(j) = queue_run_once(index,p(i),K,Length_T); 
                         elseif (type == 3)
-                            rec(j) = -dose_once(index,p(i),systems);
+                            rec(j) = -dose_once(index,p(i),systems_parpool.Value);
                         end
                     end
                     hat_mu(index,i) = mean(rec);
@@ -91,7 +94,7 @@ for K_i = 1:length(K_list)
                 if type == 2
                     x = queue_run_once(selected_index,selected_p,K,Length_T); 
                 elseif type == 3
-                    x = -dose_once(selected_index,selected_p,systems);
+                    x = -dose_once(selected_index,selected_p,systems_parpool.Value);
                 end
 
                 cur_N = N_i(selected_index,selected_p);

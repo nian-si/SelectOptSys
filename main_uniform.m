@@ -25,22 +25,24 @@ experiments = 1000;
 
 type_name = {'newsvendor','Queueing','dose'};
 
-
+load('dose_sys.mat');
+systems_parpool = parallel.pool.Constant(systems);
 stepsize_const = 2;
 K_optimal = zeros(length(K_list),1);
 if type == 1
     K_optimal = 14 * ones(length(K_list),1);
 elseif type == 2
-    optimal_map = containers.Map([16,24,32,40,128],[9,12,16,20,65]);
+    optimal_map = containers.Map([16,24,32,40,48,128],[9,12,16,20,24,65]);
     for i = 1:length(K_list)
         K_optimal(i) = optimal_map(K_list(i));
     end
 
 elseif (type == 3)
-    load('dose_sys.mat');
+   
     for i = 1:length(K_list)
         [~,K_optimal(i)] = min(opt_list(1:K_list(i),1));
     end
+    systems_parpool = parallel.pool.Constant(systems);
 end
 
 
@@ -68,7 +70,7 @@ for  K_i= 1:length(K_list)
                     if(type == 2)
                         [val_K(j,1),opt_sol,avg_n_customer,avg_D,avg_W] = run_system(val_K(j,2),type,T_l,K,[stepsize_const]);
                     elseif type == 3
-                        [val_K(j,1),opt_sol] = run_system(val_K(j,2),type,T_l,K,[],systems);
+                        [val_K(j,1),opt_sol] = run_system(val_K(j,2),type,T_l,K,[],systems_parpool.Value);
                         val_K(j,1) = -val_K(j,1);
                     else
                         [val_K(j,1),opt_sol] = run_system(val_K(j,2),type,T_l);
